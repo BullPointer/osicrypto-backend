@@ -35,9 +35,7 @@ exports.authorize_delete_staff = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const userData = jwt.verify(token, process.env.JWT_KEY);
 
-    if (
-       userData.userId === admin[0]._id
-    ) {
+    if (userData.userId === admin[0]._id) {
       req.userData = userData;
       next();
     } else {

@@ -5,7 +5,8 @@ const crypto = require("crypto");
 
 const storage = multer.diskStorage({
   destination: (err, file, cb) => cb(null, "uploads"),
-  filename: (err, file, cb) => cb(null, crypto.randomUUID() + file.originalname),
+  filename: (err, file, cb) =>
+    cb(null, crypto.randomUUID() + file.originalname),
 });
 const fileFilter = (err, file, cb) => {
   file.mimetype === "image/jpeg" || file.mimetype === "image/png"
@@ -19,12 +20,23 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+const { authorize_handle_blog } = require("../middleware/check-auth-blog");
 const blogController = require("../controllers/blogs");
 
 router.get("/", blogController.get_all_blogs);
 router.get("/:blogId", blogController.get_blog);
-router.post("/", upload.single("blogImage"), blogController.create_blog);
-router.patch("/:blogId", upload.single("blogImage"), blogController.update_blog);
-router.delete("/:blogId", blogController.delete_blog);
+router.post(
+  "/",
+  authorize_handle_blog,
+  upload.single("blogImage"),
+  blogController.create_blog
+);
+router.patch(
+  "/:blogId",
+  authorize_handle_blog,
+  upload.single("blogImage"),
+  blogController.update_blog
+);
+router.delete("/:blogId", authorize_handle_blog, blogController.delete_blog);
 
 module.exports = router;
