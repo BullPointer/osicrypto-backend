@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_ATLAS_USR_NAME": "node-shop",
+        "MONGO_ATLAS_PASSWD": "node-shop",
+        "JWT_KEY": "jwt-key"
+    }
+}
