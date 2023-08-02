@@ -92,7 +92,6 @@ exports.create_blog = (req, res, next) => {
       .catch((err) => {
         delete_uploaded_image(req.file.filename);
         res.status(500).json({
-          message: "helo",
           error: err,
         });
       });

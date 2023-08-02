@@ -107,7 +107,7 @@ exports.login_worker = (req, res, next) => {
           if (!result) {
             return res.status(401).json({
               // 401 means Unauthorized
-              message: "Auth failed",
+              message: "Wrong email or password",
               error: "Failed to authenticate",
             });
           }

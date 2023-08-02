@@ -17,7 +17,7 @@ mongoose.connect(
     "@node-rest-shop.k0ws24f.mongodb.net/"
 );
 
-app.use(cors())
+app.use(cors());
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: false }));
