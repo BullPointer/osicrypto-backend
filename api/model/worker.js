@@ -20,6 +20,7 @@ const workerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  status: { type: Boolean, default: true },
   isAdmin: {
     type: Boolean,
     default: false,

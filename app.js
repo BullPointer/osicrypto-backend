@@ -8,6 +8,7 @@ const cors = require("cors");
 const workerRoute = require("./api/routes/worker");
 const userRoute = require("./api/routes/user");
 const blogRoute = require("./api/routes/blog");
+const faqRoute = require("./api/routes/faq");
 
 mongoose.connect(
   "mongodb+srv://" +
@@ -40,6 +41,7 @@ app.use((req, res, next) => {
 app.use("/admin-panel/users", workerRoute);
 app.use("/users", userRoute);
 app.use("/api/blogs", blogRoute);
+app.use("/api/faqs", faqRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Unrecongnized Request");

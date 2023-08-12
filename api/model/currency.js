@@ -6,4 +6,4 @@ const currencySchema = mongoose.Schema({
   coins: { type: String },
 });
 
-module.exports = mongoose.model("Blog", currencySchema);
+module.exports = mongoose.model("Currency", currencySchema);

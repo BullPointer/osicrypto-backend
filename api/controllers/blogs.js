@@ -20,6 +20,7 @@ exports.get_all_blogs = (req, res, next) => {
             date: blog.date,
             category: blog.category,
             blogImage: blog.blogImage,
+            status: blog.status,
             request: {
               type: "GET",
               description: "Make a get request by Id",
@@ -74,6 +75,7 @@ exports.create_blog = (req, res, next) => {
       author: req.body.author,
       category: req.body.category,
       blogImage: req.file.path,
+      status: req.body.status,
     });
 
     blog

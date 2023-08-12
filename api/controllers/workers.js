@@ -16,6 +16,7 @@ exports.get_workers = (req, res, next) => {
             email: worker.email,
             password: worker.password,
             dateOfBirth: worker.dateOfBirth,
+            status: worker.status,
             isAdmin: worker.isAdmin,
             request: {
               type: "GET",
@@ -42,6 +43,7 @@ exports.get_worker = (req, res, next) => {
           email: userObj.email,
           password: userObj.password,
           dateOfBirth: userObj.dateOfBirth,
+          status: userObj.status,
           isAdmin: userObj.isAdmin,
           request: {
             type: "GET",
@@ -71,6 +73,7 @@ exports.signup_worker = (req, res, next) => {
             email: req.body.email,
             password: hash,
             dateOfBirth: req.body.dateOfBirth,
+            status: req.body.status,
             isAdmin: req.body.isAdmin,
           });
           newWorker

@@ -8,6 +8,7 @@ const blogSchema = mongoose.Schema({
   author: { type: String, trim: true },
   date: { type: String, default: Date.now() },
   category: { type: String, trim: true },
+  status: { type: Boolean, default: true },
   blogImage: { type: String },
 });
 

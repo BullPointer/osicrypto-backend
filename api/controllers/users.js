@@ -15,7 +15,7 @@ exports.get_users = (req, res, next) => {
             username: user.username,
             email: user.email,
             password: user.password,
-            dateOfBirth: user.dateOfBirth,
+            country: user.country,
             request: {
               type: "GET",
               description: "Make a get request by Id",
@@ -34,7 +34,7 @@ exports.get_users = (req, res, next) => {
 
 exports.get_user = (req, res, next) => {
   User.findById(req.params.userId)
-    .select("_id username email password dateOfBirth")
+    .select("_id username email password country")
     .exec()
     .then((userObj) => {
       res.status(200).json({
@@ -44,7 +44,7 @@ exports.get_user = (req, res, next) => {
           username: userObj.username,
           email: userObj.email,
           password: userObj.password,
-          dateOfBirth: userObj.dateOfBirth,
+          country: userObj.country,
           request: {
             type: "GET",
             description: "Make a get request by Id",
@@ -72,13 +72,23 @@ exports.signup_users = (req, res, next) => {
             username: req.body.username,
             email: req.body.email,
             password: hash,
-            dateOfBirth: req.body.dateOfBirth,
+            country: req.body.country,
           });
           newUser
             .save()
             .then((result) => {
+              const token = jwt.sign(
+                {
+                  username: result.username,
+                  email: result.email,
+                  userId: result._id,
+                },
+                process.env.JWT_KEY,
+                { expiresIn: "5h" }
+              );
               res.status(201).json({
                 message: "User created successfully",
+                token: token,
               });
             })
             .catch();
@@ -120,7 +130,7 @@ exports.login_users = (req, res, next) => {
                 userId: user[0]._id,
               },
               process.env.JWT_KEY,
-              { expiresIn: "1h" }
+              { expiresIn: "5h" }
             );
 
             return res.status(200).json({

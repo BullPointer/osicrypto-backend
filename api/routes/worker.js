@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authorize_delete_staff } = require("../middleware/check-auth");
+const { authorize_handle_auth } = require("../middleware/check-for-auth");
 
 const workerController = require("../controllers/workers");
 
@@ -10,7 +10,7 @@ router.post("/login", workerController.login_worker);
 router.post("/signup", workerController.signup_worker);
 router.delete(
   "/:workerId",
-  authorize_delete_staff,
+  authorize_handle_auth,
   workerController.delete_worker
 );
 

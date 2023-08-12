@@ -6,8 +6,8 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  dateOfBirth: {
-    type: Date,
+  country: {
+    type: String,
     // required: true,
   },
   email: {
@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  status: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("User", userSchema);

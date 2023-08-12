@@ -20,23 +20,26 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-const { authorize_handle_blog } = require("../middleware/check-auth-blog");
+const {
+  authorize_handle_auth,
+  authorize_only_workers,
+} = require("../middleware/check-for-auth");
 const blogController = require("../controllers/blogs");
 
 router.get("/", blogController.get_all_blogs);
 router.get("/:blogId", blogController.get_blog);
 router.post(
   "/",
-  authorize_handle_blog,
+  authorize_only_workers,
   upload.single("blogImage"),
   blogController.create_blog
 );
 router.patch(
   "/:blogId",
-  authorize_handle_blog,
+  authorize_only_workers,
   upload.single("blogImage"),
   blogController.update_blog
 );
-router.delete("/:blogId", authorize_handle_blog, blogController.delete_blog);
+router.delete("/:blogId", authorize_handle_auth, blogController.delete_blog);
 
 module.exports = router;
