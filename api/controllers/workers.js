@@ -8,6 +8,7 @@ exports.get_workers = (req, res, next) => {
     .exec()
     .then((workers) => {
       res.status(200).json({
+        count: workers.length,
         message: "Staffs fetched successfully",
         users: workers.map((worker) => {
           return {

@@ -8,6 +8,7 @@ exports.get_users = (req, res, next) => {
     .exec()
     .then((users) => {
       res.status(200).json({
+        count: users.length,
         message: "Users fetched successfully",
         users: users.map((user) => {
           return {
