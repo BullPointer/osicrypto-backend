@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -10,6 +11,7 @@ const userRoute = require("./api/routes/user");
 const blogRoute = require("./api/routes/blog");
 const faqRoute = require("./api/routes/faq");
 const visitorRoute = require("./api/routes/visit");
+const locationRoute = require("./api/routes/location");
 
 mongoose.connect(
   "mongodb+srv://" +
@@ -44,6 +46,7 @@ app.use("/users", userRoute);
 app.use("/api/blogs", blogRoute);
 app.use("/api/faqs", faqRoute);
 app.use("/api/visitors", visitorRoute);
+app.use("/api/locations", locationRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Unrecongnized Request");

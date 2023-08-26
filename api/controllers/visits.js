@@ -52,7 +52,7 @@ exports.make_visitors = async (req, res, next) => {
         .exec()
         .then((data) => {
           Visit.findByIdAndUpdate(
-            { _id: data.id },
+            { _id: data._id },
             {
               $set: {
                 visitors: data.visitors + 1,
@@ -77,9 +77,10 @@ exports.make_visitors = async (req, res, next) => {
         .exec()
         .then((data) => {
           Visit.findByIdAndUpdate(
-            { _id: data.id },
+            { _id: data._id },
             {
               $set: {
+                visitors: data.visitors,
                 views: data.views + 1,
               },
             }
