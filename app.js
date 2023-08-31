@@ -12,6 +12,8 @@ const blogRoute = require("./api/routes/blog");
 const faqRoute = require("./api/routes/faq");
 const visitorRoute = require("./api/routes/visit");
 const locationRoute = require("./api/routes/location");
+const privacyPolicyRoute = require("./api/routes/privacyPolicy");
+const termAndConditionRoute = require("./api/routes/termAndCondition");
 
 mongoose.connect(
   "mongodb+srv://" +
@@ -48,6 +50,8 @@ app.use("/api/blogs", blogRoute);
 app.use("/api/faqs", faqRoute);
 app.use("/api/visitors", visitorRoute);
 app.use("/api/locations", locationRoute);
+app.use("/api/privacy-policy", privacyPolicyRoute);
+app.use("/api/term-and-condition", termAndConditionRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Unrecongnized Request");
