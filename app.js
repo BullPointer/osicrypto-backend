@@ -9,6 +9,7 @@ const cors = require("cors");
 const workerRoute = require("./api/routes/worker");
 const userRoute = require("./api/routes/user");
 const blogRoute = require("./api/routes/blog");
+const supportRoute = require("./api/routes/support");
 const faqRoute = require("./api/routes/faq");
 const visitorRoute = require("./api/routes/visit");
 const locationRoute = require("./api/routes/location");
@@ -43,10 +44,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use("/admin-panel/users", workerRoute);
 app.use("/users", userRoute);
 app.use("/api/blogs", blogRoute);
+app.use("/api/supports", supportRoute);
 app.use("/api/faqs", faqRoute);
 app.use("/api/visitors", visitorRoute);
 app.use("/api/locations", locationRoute);
