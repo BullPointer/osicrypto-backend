@@ -43,8 +43,8 @@ const {
 const { make_chat } = require("../controllers/makeChats");
 
 router.get("/", allow_only_users, get_all_support_by_user);
-router.get("/:id", allow_only_users, get_support);
-router.get("/", allow_only_admin_authorized, get_all_support);
+router.get("/get-all", allow_only_admin_authorized, get_all_support);
+router.get("/:id", allow_only_authorized, get_support);
 router.patch(
   "/make-chat/:id",
   upload.single("fileImage"),
@@ -57,6 +57,6 @@ router.post(
   allow_only_users,
   create_support
 );
-router.delete("/:id", allow_only_users, delete_support);
+router.delete("/:id", allow_only_authorized, delete_support);
 
 module.exports = router;

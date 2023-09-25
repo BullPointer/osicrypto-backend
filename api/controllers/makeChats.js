@@ -15,7 +15,10 @@ exports.make_chat = async (req, res, next) => {
         fileImage: req.file?.path,
       },
     ];
-    support.messages.push(...newMessage);
+    support.status = req.body.status;
+    if (req.body.msg.length > 0) {
+      support.messages.push(...newMessage);
+    }
 
     support
       .save()
