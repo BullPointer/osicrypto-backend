@@ -1,7 +1,14 @@
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/user");
+const Token = require("../model/token");
+const {
+  verify_mail_token,
+  reset_password_mail,
+  completed_registration,
+} = require("../utils/handle-nodemailer");
 
 exports.get_users = (req, res, next) => {
   User.find()
@@ -33,7 +40,7 @@ exports.get_users = (req, res, next) => {
     });
 };
 
-exports.get_user = (req, res, next) => {
+exports.get_user = async (req, res, next) => {
   User.findById(req.params.userId)
     .select("_id username email password country")
     .exec()
@@ -62,7 +69,115 @@ exports.get_user = (req, res, next) => {
     });
 };
 
-exports.signup_users = (req, res, next) => {
+exports.req_reset_password = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = await Token.findOne({ userId: String(user._id) });
+
+      if (!user) return res.status(404).send("User not found!");
+
+      if (!token) {
+        const savetoken = await new Token({
+          userId: String(user._id),
+          token: crypto.randomBytes(32).toString("hex"),
+        }).save();
+
+        await reset_password_mail(
+          String(user._id),
+          user.username,
+          user.email,
+          savetoken.token
+        );
+
+        return res.status(200).json({
+          message: "Reset link has successfully been sent to your email!",
+        });
+      } else {
+        await reset_password_mail(
+          String(user._id),
+          user.username,
+          user.email,
+          token.token
+        );
+
+        return res.status(200).json({
+          message: "Reset link has successfully been sent to your email!",
+        });
+      }
+    } else {
+      return res.status(404).json({
+        message: "User not found in our database",
+      });
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+};
+
+exports.reset_password = async (req, res, next) => {
+  const { id, token, password } = req.body;
+  const user = await User.findOne({ _id: id });
+
+  if (!user) return res.status(400).send("Invalid credentials");
+
+  const tokenData = await Token.findOne({ userId: id, token: token });
+
+  if (!tokenData) return res.status(400).send("Invalid credentials");
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    user.password = hash;
+    user.save();
+    Token.findByIdAndRemove({ _id: String(tokenData._id) })
+      .then(() => {
+        return res.status(200).json({
+          message: "Password reset completed successfully!",
+        });
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+        res.status(500).json({
+          message: "Internal server error",
+          error: error,
+        });
+      });
+  });
+};
+
+exports.confirm_email = async (req, res, next) => {
+  const { id, token } = req.params;
+  const user = await User.findOne({ _id: id });
+
+  if (!user) return res.status(400).send("Invalid link");
+
+  const tokenData = await Token.findOne({ userId: id, token: token });
+
+  if (!tokenData) return res.status(400).send("Invalid link");
+  console.log(user.email, user.username);
+  user.verified = true;
+  user.save().then(() => {
+    Token.findByIdAndRemove({ _id: String(tokenData._id) })
+      .then(() => {
+        completed_registration(user.username, user.email);
+        return res.status(200).json({
+          message: "Email successfully confirmed!!",
+        });
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+        res.status(500).json({
+          message: "Internal server error",
+          error: error,
+        });
+      });
+  });
+};
+
+exports.signup_users = async (req, res, next) => {
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
@@ -77,7 +192,18 @@ exports.signup_users = (req, res, next) => {
           });
           newUser
             .save()
-            .then((result) => {
+            .then(async (result) => {
+              const savetoken = await new Token({
+                userId: result._id,
+                token: crypto.randomBytes(32).toString("hex"),
+              }).save();
+              await verify_mail_token(
+                result._id,
+                result.username,
+                result.email,
+                savetoken.token
+              );
+
               const token = jwt.sign(
                 {
                   username: result.username,
@@ -88,7 +214,7 @@ exports.signup_users = (req, res, next) => {
                 { expiresIn: "5h" }
               );
               res.status(201).json({
-                message: "User created successfully",
+                message: "A confirmation link has been sent to your email",
                 token: token,
               });
             })
@@ -103,19 +229,28 @@ exports.signup_users = (req, res, next) => {
     })
     .catch((err) => {
       res.status(500).json({
+        message: "Internal server error",
         error: err,
       });
     });
 };
 
-exports.login_users = (req, res, next) => {
+exports.login_users = async (req, res, next) => {
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
       if (user.length > 0) {
+        const token = jwt.sign(
+          {
+            username: user[0].username,
+            email: user[0].email,
+            userId: user[0]._id,
+          },
+          process.env.JWT_KEY,
+          { expiresIn: "5h" }
+        );
+
         bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-          console.log(err);
-          console.log(result);
           if (!result) {
             return res.status(401).json({
               // 401 means Unauthorized
@@ -123,18 +258,26 @@ exports.login_users = (req, res, next) => {
               error: "Failed to authenticate",
             });
           }
-          if (result) {
-            const token = jwt.sign(
-              {
-                username: user[0].username,
-                email: user[0].email,
-                userId: user[0]._id,
-              },
-              process.env.JWT_KEY,
-              { expiresIn: "5h" }
-            );
-
+          if (result && !user[0].verified) {
+            Token.findOne({
+              userId: String(user[0]._id),
+            }).then((data) => {
+              verify_mail_token(
+                String(user[0]._id),
+                user[0].username,
+                user[0].email,
+                data.token
+              );
+              return res.status(200).json({
+                verified: false,
+                message: "A confirmation link has been sent to your email",
+                token: token,
+              });
+            });
+          }
+          if (result && user[0].verified) {
             return res.status(200).json({
+              verified: true,
               message: "Auth successful",
               token: token,
             });

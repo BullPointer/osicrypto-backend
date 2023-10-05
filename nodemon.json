@@ -1,8 +1,11 @@
 {
-    "env": {
-        "MONGO_ATLAS_USR_NAME": "node-shop",
-        "MONGO_ATLAS_PASSWD": "node-shop",
-        "JWT_KEY": "jwt-key",
-        "IPINFO_KEY": "efa0007b8d31b7"
-    }
+  "env": {
+    "MONGO_ATLAS_USR_NAME": "node-shop",
+    "MONGO_ATLAS_PASSWD": "node-shop",
+    "JWT_KEY": "jwt-key",
+    "IPINFO_KEY": "efa0007b8d31b7",
+    "MAIL_SERVICE": "gmail",
+    "MAIL_USER": "blueded88@gmail.com",
+    "MAIL_PASS": "vbedipxxujbnwqsv"
+  }
 }
