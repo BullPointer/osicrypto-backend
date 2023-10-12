@@ -82,7 +82,7 @@ exports.create_support = (req, res, next) => {
         {
           fromAdmin: req.body.message.fromAdmin,
           msg: req.body.message.msg,
-          fileImage: req.file.path,
+          fileImage: req.file && req.file.path,
         },
       ],
     });
@@ -100,7 +100,7 @@ exports.create_support = (req, res, next) => {
         });
       })
       .catch((err) => {
-        delete_uploaded_image(req.file.filename);
+        req.file && delete_uploaded_image(req.file.filename);
         res.status(500).json({
           error: err,
         });
