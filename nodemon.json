@@ -6,6 +6,7 @@
     "IPINFO_KEY": "efa0007b8d31b7",
     "MAIL_SERVICE": "gmail",
     "MAIL_USER": "blueded88@gmail.com",
-    "MAIL_PASS": "vbedipxxujbnwqsv"
+    "MAIL_PASS": "vbedipxxujbnwqsv",
+    "VITE_GOOGLE_CLIENT_ID": "875261339-m0g9m0bp25qjg1dn9t6p23uo2mhkhiqg.apps.googleusercontent.com"
   }
 }

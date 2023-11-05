@@ -1,5 +1,7 @@
+require("dotenv").config();
 const crypto = require("crypto");
 const mongoose = require("mongoose");
+const { OAuth2Client } = require("google-auth-library");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/user");
@@ -296,6 +298,23 @@ exports.login_users = async (req, res, next) => {
         error: "Failed to authenticate",
       });
     });
+};
+
+exports.google_login = async (req, res, next) => {
+  const client = new OAuth2Client({
+    scopes: "https://www.googleapis.com/auth/cloud-platform",
+  });
+  // const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
+  const token = req.body;
+
+  // const ticket = await client.verifyIdToken({
+  //   idToken: token,
+  //   audience: process.env.CLIENT_ID,
+  // });
+  // const payload = ticket.getPayload();
+  // console.log("The ticket is ", payload);
+
+  res.status(200).send("Google account saved successfully");
 };
 
 exports.delete_users = (req, res, next) => {
