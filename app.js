@@ -16,13 +16,16 @@ const locationRoute = require("./api/routes/location");
 const privacyPolicyRoute = require("./api/routes/privacyPolicy");
 const termAndConditionRoute = require("./api/routes/termAndCondition");
 
-mongoose.connect(
-  "mongodb+srv://" +
-    process.env.MONGO_ATLAS_USR_NAME +
-    ":" +
-    process.env.MONGO_ATLAS_PASSWD +
-    "@node-rest-shop.k0ws24f.mongodb.net/"
-);
+mongoose
+  .connect(
+    "mongodb+srv://" +
+      process.env.MONGO_ATLAS_USR_NAME +
+      ":" +
+      process.env.MONGO_ATLAS_PASSWD +
+      "@node-rest-shop.k0ws24f.mongodb.net/"
+  )
+  .then(() => console.log("MongoDB connected successfully!"))
+  .catch((err) => console.log(`Error found to be ${err.message}`));
 
 app.use(cors());
 app.use(morgan("dev"));
