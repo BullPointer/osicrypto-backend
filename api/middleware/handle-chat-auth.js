@@ -7,6 +7,7 @@ exports.allow_only_users = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const userData = jwt.decode(token, process.env.JWT_KEY);
     const user = await User.findById(userData.userId).exec();
+
     if (!user) {
       return res.status(401).json({
         message: "User not identified",

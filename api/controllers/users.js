@@ -263,18 +263,36 @@ exports.login_users = async (req, res, next) => {
           if (result && !user[0].verified) {
             Token.findOne({
               userId: String(user[0]._id),
-            }).then((data) => {
-              verify_mail_token(
-                String(user[0]._id),
-                user[0].username,
-                user[0].email,
-                data.token
-              );
-              return res.status(200).json({
-                verified: false,
-                message: "A confirmation link has been sent to your email",
-                token: token,
-              });
+            }).then(async (data) => {
+              if (!data) {
+                const savetoken = await new Token({
+                  userId: String(user[0]._id),
+                  token: crypto.randomBytes(32).toString("hex"),
+                }).save();
+                verify_mail_token(
+                  String(user[0]._id),
+                  user[0].username,
+                  user[0].email,
+                  savetoken.token
+                );
+                return res.status(200).json({
+                  verified: false,
+                  message: "A confirmation link has been sent to your email",
+                  token: token,
+                });
+              } else {
+                verify_mail_token(
+                  String(user[0]._id),
+                  user[0].username,
+                  user[0].email,
+                  data.token
+                );
+                return res.status(200).json({
+                  verified: false,
+                  message: "A confirmation link has been sent to your email",
+                  token: token,
+                });
+              }
             });
           }
           if (result && user[0].verified) {
